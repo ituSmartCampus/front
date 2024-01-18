@@ -1,7 +1,7 @@
 export default async function handler(req, res) {
   if (req.method === "POST") {
     // POST request using fetch()
-    const response = await fetch(`http://0.0.0.0:3131/api/auth/signin`, {
+    const response = await fetch(`http://127.0.0.1:3131/api/auth/signin`, {
       // Adding method type
       method: "POST",
       // Adding body or contents to send
