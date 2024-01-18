@@ -172,7 +172,7 @@ const Dashboard = ({ err, moisture, air, temperature }) => {
 
 export async function getServerSideProps({ req, res }) {
   const cookie = getCookie("jwt", { req, res });
-  const moisture = await fetch(`http://127.0.0.1:3131/api/data/list/moisture`, {
+  const moisture = await fetch(`http://0.0.0.0:3131/api/data/list/moisture`, {
     headers: { Authorization: `Bearer ${cookie}` },
   }).then((response) => {
     if (response.status == 200) {
@@ -181,7 +181,7 @@ export async function getServerSideProps({ req, res }) {
       return false;
     }
   });
-  const air = await fetch(`http://127.0.0.1:3131/api/data/list/air`, {
+  const air = await fetch(`http://0.0.0.0:3131/api/data/list/air`, {
     headers: { Authorization: `Bearer ${cookie}` },
   }).then((response) => {
     if (response.status == 200) {
@@ -191,7 +191,7 @@ export async function getServerSideProps({ req, res }) {
     }
   });
   const temperature = await fetch(
-    `http://127.0.0.1:3131/api/data/list/temperature`,
+    `http://0.0.0.0:3131/api/data/list/temperature`,
     {
       headers: { Authorization: `Bearer ${cookie}` },
     }
