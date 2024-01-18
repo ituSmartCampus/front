@@ -1,0 +1,17 @@
+.mainContainer{
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+    .container {
+        display: flex;
+        flex-wrap: wrap;
+        .chart {
+          width: 50%;
+          margin-bottom: 20px;
+        }
+        .text{
+            text-align: center;
+        }
+      }
+}
