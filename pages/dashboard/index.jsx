@@ -31,80 +31,91 @@ ChartJS.register(
   ArcElement
 );
 
-const Dashboard = ({ err, moisture, air, temperature }) => {
+const Dashboard = ({ err, moisture, air, temperature, listData }) => {
   const router = useRouter();
   if (err) {
     return <ErrorPage statusCode={err} />;
   }
-  const dataFake = {
-    labels: ["January", "February", "March", "April", "May", "June", "July"],
-    datasets: [
-      {
-        label: "Humidity",
-        data: [65, 59, 80, 81, 56, 55, 40],
-        borderColor: "rgba(255, 123, 42, 0.2)",
-        backgroundColor: "rgba(255, 123, 42, 0.2)",
-      },
-      {
-        label: "Temperature",
-        data: [28, 30, 35, 32, 28, 31, 29],
-        borderColor: "rgba(255, 99, 132, 0.2)",
-        backgroundColor: "rgba(255, 99, 132, 0.2)",
-      },
-      {
-        label: "Air Condition",
-        data: [40, 42, 38, 45, 39, 41, 37],
-        borderColor: "rgba(75, 192, 192, 0.2)",
-        backgroundColor: "rgba(75, 192, 192, 0.2)",
-      },
-    ],
+  const generateChartData = (dataList, label, backgroundColor, borderColor) => {
+    return {
+      labels: dataList.map((item) => item.time),
+      datasets: [
+        {
+          label: "Moisture",
+          data: dataList
+            .filter((item) => item.sensorType === "moisture")
+            .map((item) => parseFloat(item.measuredValue)),
+          borderColor: "rgba(255, 99, 132, 1)",
+          backgroundColor: "rgba(255, 99, 132, 0.2)",
+        },
+        {
+          label: "Air",
+          data: dataList
+            .filter((item) => item.sensorType === "air")
+            .map((item) => parseFloat(item.measuredValue)),
+          borderColor: "rgba(54, 162, 235, 1)",
+          backgroundColor: "rgba(54, 162, 235, 0.2)",
+        },
+        {
+          label: "Temperature",
+          data: dataList
+            .filter((item) => item.sensorType === "temperature")
+            .map((item) => parseFloat(item.measuredValue)),
+          borderColor: "rgba(255, 206, 86, 1)",
+          backgroundColor: "rgba(255, 206, 86, 0.2)",
+        },
+      ],
+    };
   };
+  const humidityData = generateChartData(
+    moisture.datas,
+    "Humidity",
+    "rgba(255, 99, 132, 0.2)",
+    "rgba(255, 99, 132, 1)"
+  );
 
-  const humidityData = {
-    labels: ["January", "February", "March", "April", "May", "June", "July"],
-    datasets: [
-      {
-        label: "Humidity",
-        backgroundColor: "rgba(255, 99, 132, 0.2)",
-        borderColor: "rgba(255, 99, 132, 1)",
-        borderWidth: 1,
-        data: [65, 59, 80, 81, 56, 55, 40],
-      },
-    ],
-  };
+  const temperatureData = generateChartData(
+    temperature.datas,
+    "Temperature",
+    "rgba(54, 162, 235, 0.2)",
+    "rgba(54, 162, 235, 1)"
+  );
 
-  const temperatureData = {
-    labels: ["January", "February", "March", "April", "May", "June", "July"],
-    datasets: [
-      {
-        label: "Temperature",
-        backgroundColor: "rgba(54, 162, 235, 0.2)",
-        borderColor: "rgba(54, 162, 235, 1)",
-        borderWidth: 1,
-        data: [28, 30, 35, 32, 28, 31, 29],
-      },
-    ],
-  };
+  const airQualityData = generateChartData(
+    air.datas,
+    "Air Quality",
+    "rgba(75, 192, 192, 0.2)",
+    "rgba(75, 192, 192, 1)"
+  );
 
-  const airQualityData = {
-    labels: ["January", "February", "March", "April", "May", "June", "July"],
-    datasets: [
-      {
-        label: "Air Quality",
-        backgroundColor: "rgba(75, 192, 192, 0.2)",
-        borderColor: "rgba(75, 192, 192, 1)",
-        borderWidth: 1,
-        data: [40, 42, 38, 45, 39, 41, 37],
-      },
-    ],
-  };
+  const listDatas = generateChartData(
+    listData.datas,
+    "Air Quality",
+    "rgba(75, 192, 192, 0.2)",
+    "rgba(75, 192, 192, 1)"
+  );
 
   return (
     <div className={styles.mainContainer}>
-      <h1>Kontrol Panel</h1>
       <div className={styles.container}>
-        <div className={styles.chart}>
-          <Line data={dataFake}></Line>
+        <div className={styles.genelChart}>
+          <div className={styles.textBig}>
+            <p>Genel Panel</p>
+          </div>
+          <Line
+            data={listDatas}
+            options={{
+              title: {
+                display: true,
+                text: "List Data",
+                fontSize: 20,
+              },
+              legend: {
+                display: true,
+                position: "right",
+              },
+            }}
+          />
         </div>
         <div className={styles.chart}>
           <div className={styles.text}>
@@ -171,9 +182,9 @@ const Dashboard = ({ err, moisture, air, temperature }) => {
 };
 
 export async function getServerSideProps({ req, res }) {
-  // const cookie = getCookie("jwt", { req, res });
+  const cookie = getCookie("jwt", { req, res });
   const moisture = await fetch(`http://127.0.0.1:3131/api/data/list/moisture`, {
-    // headers: { Authorization: `Bearer ${cookie}` },
+    headers: { Authorization: `Bearer ${cookie}` },
   }).then((response) => {
     if (response.status == 200) {
       return response.json();
@@ -182,7 +193,7 @@ export async function getServerSideProps({ req, res }) {
     }
   });
   const air = await fetch(`http://127.0.0.1:3131/api/data/list/air`, {
-    // headers: { Authorization: `Bearer ${cookie}` },
+    headers: { Authorization: `Bearer ${cookie}` },
   }).then((response) => {
     if (response.status == 200) {
       return response.json();
@@ -193,7 +204,7 @@ export async function getServerSideProps({ req, res }) {
   const temperature = await fetch(
     `http://127.0.0.1:3131/api/data/list/temperature`,
     {
-      // headers: { Authorization: `Bearer ${cookie}` },
+      headers: { Authorization: `Bearer ${cookie}` },
     }
   ).then((response) => {
     if (response.status == 200) {
@@ -202,16 +213,27 @@ export async function getServerSideProps({ req, res }) {
       return false;
     }
   });
-  if (moisture && temperature && air) {
-    console.log(moisture, "moisture");
-    console.log(temperature, "temperature");
-    console.log(air, "air");
+  const list = await fetch(`http://127.0.0.1:3131/api/data/list`, {
+    headers: { Authorization: `Bearer ${cookie}` },
+  }).then((response) => {
+    if (response.status == 200) {
+      return response.json();
+    } else {
+      return false;
+    }
+  });
+  if (moisture && temperature && air && list) {
+    console.log(list, "listss");
+    // console.log(moisture, "moisture");
+    // console.log(temperature, "temperature");
+    // console.log(air, "air");
     return {
       props: {
         err: false,
         moisture: moisture || [],
         temperature: temperature || [],
         air: air || [],
+        listData: list || [],
       },
     };
   } else {

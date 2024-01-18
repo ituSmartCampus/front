@@ -5,8 +5,15 @@ import { ReactSVG } from "react-svg";
 
 import Link from "next/link";
 // import { getCookie, setCookies } from "cookies-next";
+import Script from "next/script";
+import ConfirmationModal from "../../components/Modal/ConfirmationModal";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import Modal from "../../components/Modal/Modal";
+import User from "../../assets/user-fill.svg";
+import Linkedin from "../../assets/linkedin.svg";
+import Google from "../../assets/google.svg";
+import Mail from "../../assets/mail.svg";
 import Lock from "../../assets/lock.svg";
 import ShowPassword from "../../assets/eye-line.svg";
 import HidePassword from "../../assets/eye-off-line.svg";
