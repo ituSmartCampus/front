@@ -212,7 +212,6 @@ export async function getServerSideProps({ req, res }) {
         moisture: moisture || [],
         temperature: temperature || [],
         air: air || [],
-        cookie,
       },
     };
   } else {
