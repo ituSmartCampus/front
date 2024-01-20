@@ -1,6 +1,5 @@
 import React, { createRef, useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { getCookie, setCookies } from "cookies-next";
 import { ReactSVG } from "react-svg";
 import UserAdd from "../../assets/user-add-fill.svg";
 import Link from "next/link";
